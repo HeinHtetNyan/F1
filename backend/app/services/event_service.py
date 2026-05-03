@@ -38,9 +38,7 @@ class EventService:
         result = await self.db.execute(query)
         return list(result.scalars().all())
 
-    # ------------------------------------------------------------------
     # Redis helpers — maintain a capped list of recent events
-    # ------------------------------------------------------------------
 
     @staticmethod
     async def push_to_cache(event: EventResponse) -> None:

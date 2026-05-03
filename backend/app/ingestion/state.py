@@ -38,9 +38,7 @@ class IngestionState:
         self._null_skip_count: int = 0
         self._poll_count: int = 0
 
-    # ------------------------------------------------------------------
     # Session lifecycle
-    # ------------------------------------------------------------------
 
     def reset_for_session(self, new_key: int) -> None:
         """Clear all state when the active session changes."""
@@ -53,9 +51,7 @@ class IngestionState:
         self.__init__()
         self.session_key = new_key
 
-    # ------------------------------------------------------------------
     # Lap deduplication / staleness
-    # ------------------------------------------------------------------
 
     def is_known_lap(self, session_key: int, driver_number: int, lap_number: int) -> bool:
         if (session_key, driver_number, lap_number) in self.known_lap_keys:
@@ -101,9 +97,7 @@ class IngestionState:
         den = sum((i - x_mean) ** 2 for i in range(n))
         return round(num / den, 4) if den else 0.0
 
-    # ------------------------------------------------------------------
     # Pit stop deduplication
-    # ------------------------------------------------------------------
 
     def is_known_pit(self, session_key: int, driver_number: int, stop_number: int) -> bool:
         if (session_key, driver_number, stop_number) in self.known_pit_keys:
@@ -114,9 +108,7 @@ class IngestionState:
     def mark_pit(self, session_key: int, driver_number: int, stop_number: int) -> None:
         self.known_pit_keys.add((session_key, driver_number, stop_number))
 
-    # ------------------------------------------------------------------
     # Race-control deduplication
-    # ------------------------------------------------------------------
 
     def is_known_rc(
         self,
@@ -137,9 +129,7 @@ class IngestionState:
     ) -> None:
         self.known_rc_keys.add((session_key, date, message))
 
-    # ------------------------------------------------------------------
     # Position tracking (overtake detection)
-    # ------------------------------------------------------------------
 
     def swap_positions(self, new_positions: Dict[int, int]) -> Dict[int, int]:
         """Atomically replace positions; return the previous snapshot."""
@@ -147,9 +137,7 @@ class IngestionState:
         self.prev_positions = dict(new_positions)
         return prev
 
-    # ------------------------------------------------------------------
     # Anomaly / stats reporting
-    # ------------------------------------------------------------------
 
     def tick(self) -> None:
         """Call once per poll cycle; logs stats every 100 cycles."""

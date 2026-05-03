@@ -63,9 +63,7 @@ app.include_router(predictions.router, prefix="/api/v1")
 app.include_router(radio.router, prefix="/api/v1")
 
 
-# ---------------------------------------------------------------------------
 # WebSocket endpoint
-# ---------------------------------------------------------------------------
 
 @app.websocket("/ws/live")
 async def websocket_live(websocket: WebSocket) -> None:

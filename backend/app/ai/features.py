@@ -10,9 +10,7 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 
-# ---------------------------------------------------------------------------
 # Feature dataclasses
-# ---------------------------------------------------------------------------
 
 @dataclass
 class PitStopFeatures:
@@ -35,9 +33,7 @@ class OvertakeFeatures:
     ahead_driver_number: Optional[int] = None
 
 
-# ---------------------------------------------------------------------------
 # Builder functions
-# ---------------------------------------------------------------------------
 
 def build_pit_features(
     stint_info: dict,

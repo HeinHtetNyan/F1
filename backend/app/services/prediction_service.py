@@ -37,9 +37,7 @@ class PredictionService:
         result = await self.db.execute(query)
         return list(result.scalars().all())
 
-    # ------------------------------------------------------------------
     # Redis helpers
-    # ------------------------------------------------------------------
 
     @staticmethod
     async def cache_predictions(predictions: List[PredictionResponse]) -> None:

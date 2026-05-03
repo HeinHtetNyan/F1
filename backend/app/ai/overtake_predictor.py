@@ -16,7 +16,7 @@ def predict(features: OvertakeFeatures) -> Tuple[float, Dict[str, Any]]:
     """
     gap = features.gap_to_ahead
 
-    # --- gap factor: probability drops sharply beyond 1-second DRS range ---
+    #  gap factor: probability drops sharply beyond 1-second DRS range 
     if gap <= 0:
         gap_factor = 0.0
     elif gap < 0.5:
@@ -28,10 +28,10 @@ def predict(features: OvertakeFeatures) -> Tuple[float, Dict[str, Any]]:
     else:
         gap_factor = 0.05
 
-    # --- DRS multiplier ---
+    #  DRS multiplier 
     drs_mult = 1.5 if (features.drs_available and features.sector_type == "straight") else 1.0
 
-    # --- 3-lap pace delta factor (graduated, not stepped) ---
+    #  3-lap pace delta factor (graduated, not stepped) 
     pd = features.last_3_lap_pace_delta
     if pd > 0.5:
         pace_factor = 0.35
@@ -43,7 +43,7 @@ def predict(features: OvertakeFeatures) -> Tuple[float, Dict[str, Any]]:
         # Attacker is slower; graduated penalty capped at -0.15
         pace_factor = max(-0.15, pd * 0.30)
 
-    # --- tyre freshness advantage ---
+    #  tyre freshness advantage 
     tyre_factor = min(max(features.tire_advantage / 0.5, 0.0) * 0.15, 0.15)
 
     probability = (gap_factor * drs_mult) + pace_factor + tyre_factor

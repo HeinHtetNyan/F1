@@ -38,9 +38,7 @@ logger = get_logger(__name__)
 settings = get_settings()
 
 
-# ---------------------------------------------------------------------------
 # Per-connection state
-# ---------------------------------------------------------------------------
 
 @dataclass
 class _ConnState:
@@ -52,9 +50,7 @@ class _ConnState:
     delivery_task: Optional[asyncio.Task] = None
 
 
-# ---------------------------------------------------------------------------
 # Connection manager
-# ---------------------------------------------------------------------------
 
 class ConnectionManager:
     def __init__(self) -> None:
@@ -62,9 +58,7 @@ class ConnectionManager:
         self._lock = asyncio.Lock()
         self._subscriber_task: Optional[asyncio.Task] = None
 
-    # ------------------------------------------------------------------
     # Connection lifecycle
-    # ------------------------------------------------------------------
 
     async def connect(self, websocket: WebSocket) -> None:
         await websocket.accept()
@@ -89,9 +83,7 @@ class ConnectionManager:
                 pass
         logger.info("WebSocket disconnected — total: %d", len(self._connections))
 
-    # ------------------------------------------------------------------
     # Delay control (called from WS endpoint on client message)
-    # ------------------------------------------------------------------
 
     def set_delay(self, websocket: WebSocket, delay_seconds: float) -> None:
         state = self._connections.get(websocket)
@@ -105,9 +97,7 @@ class ConnectionManager:
         """Flush all queued messages immediately by zeroing delay."""
         self.set_delay(websocket, 0.0)
 
-    # ------------------------------------------------------------------
     # Broadcasting
-    # ------------------------------------------------------------------
 
     async def broadcast(self, payload: str) -> None:
         """Enqueue a message for all connected clients (respects per-client delay)."""
@@ -122,9 +112,7 @@ class ConnectionManager:
             except asyncio.QueueFull:
                 logger.warning("WS queue full for %s — dropping message", id(ws))
 
-    # ------------------------------------------------------------------
     # Per-connection delivery task
-    # ------------------------------------------------------------------
 
     async def _deliver_to(self, ws: WebSocket, state: _ConnState) -> None:
         """Pull from the connection's queue and deliver at the scheduled time."""
@@ -155,9 +143,7 @@ class ConnectionManager:
                 logger.debug("Delivery error for WS %s: %s", id(ws), exc)
                 break
 
-    # ------------------------------------------------------------------
     # Redis pub/sub subscriber (background task)
-    # ------------------------------------------------------------------
 
     async def start_subscriber(self) -> None:
         if self._subscriber_task and not self._subscriber_task.done():

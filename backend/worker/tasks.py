@@ -57,10 +57,7 @@ _seen_radio: set = set()                           # (driver_number, date) dedup
 _latest_car_positions: Dict[int, Dict] = {}        # driver_number → {x, y, z, date}
 
 
-# ---------------------------------------------------------------------------
 # Redis fallback cache helpers
-# ---------------------------------------------------------------------------
-
 async def _cache_fallback(key_suffix: str, data: List[Dict]) -> None:
     """Persist a successful API response so we can serve it if the API fails."""
     if not data:
@@ -96,10 +93,7 @@ async def _fetch_with_fallback(
     return data
 
 
-# ---------------------------------------------------------------------------
 # Main ingestion + prediction pipeline
-# ---------------------------------------------------------------------------
-
 async def ingest_and_update(
     client: OpenF1Client,
     db: AsyncSession,
@@ -128,9 +122,7 @@ async def ingest_and_update(
         _state.tick()
         _poll_count += 1
 
-        # ----------------------------------------------------------------
         # Concurrent data fetch with per-endpoint Redis fallback
-        # ----------------------------------------------------------------
         (
             raw_drivers,
             raw_positions,
@@ -149,9 +141,7 @@ async def ingest_and_update(
             _fetch_with_fallback(client.get_race_control(str(session_key)), "race_control"),
         )
 
-        # ----------------------------------------------------------------
         # 1. Upsert drivers
-        # ----------------------------------------------------------------
         driver_svc = DriverService(db)
         for raw in raw_drivers:
             if not raw.get("driver_number"):
@@ -165,9 +155,7 @@ async def ingest_and_update(
         driver_map: Dict[int, Any] = {d.driver_number: d for d in all_drivers}
         await DriverService.cache_drivers(all_drivers)
 
-        # ----------------------------------------------------------------
         # 2. Persist new, non-duplicate, non-stale laps
-        # ----------------------------------------------------------------
         for raw in raw_laps:
             dn  = raw.get("driver_number")
             ln  = raw.get("lap_number")
@@ -200,9 +188,7 @@ async def ingest_and_update(
             await db.rollback()
             logger.error("Lap commit error: %s", exc)
 
-        # ----------------------------------------------------------------
         # 3. Build leaderboard
-        # ----------------------------------------------------------------
         leaderboard = _build_leaderboard(
             session_key=session_key,
             session_name=session_data.get("session_name"),
@@ -219,9 +205,7 @@ async def ingest_and_update(
         )
         await LeaderboardService.set_live(leaderboard)
 
-        # ----------------------------------------------------------------
         # 4. Event detection
-        # ----------------------------------------------------------------
         event_svc = EventService(db)
         new_events: List[EventCreate] = []
 
@@ -281,9 +265,7 @@ async def ingest_and_update(
                 await db.rollback()
                 logger.error("Event persist error: %s", exc)
 
-        # ----------------------------------------------------------------
         # 5. AI predictions with feature extraction
-        # ----------------------------------------------------------------
         stint_map    = _build_stint_map(raw_stints)
         interval_map = _build_interval_map(raw_intervals)
         total_laps   = int(session_data.get("total_laps") or 60)
@@ -373,14 +355,12 @@ async def ingest_and_update(
 
         await PredictionService.cache_predictions(predictions_out)
 
-        # ----------------------------------------------------------------
         # 6. Publish to per-domain Redis channels
-        # ----------------------------------------------------------------
         redis = get_redis()
         now_iso = datetime.now(timezone.utc).isoformat()
         is_snapshot_cycle = (_poll_count % settings.snapshot_every_n_cycles == 0)
 
-        # --- leaderboard channel ---
+        # leaderboard channel
         lb_entries = [e.model_dump() for e in leaderboard.entries]
         if is_snapshot_cycle:
             lb_payload = json.dumps({
@@ -418,7 +398,7 @@ async def ingest_and_update(
         if lb_payload:
             await redis.publish(settings.redis_channel_leaderboard, lb_payload)
 
-        # --- events channel (only when new events exist) ---
+        # events channel (only when new events exist)
         if new_events:
             events_payload = json.dumps({
                 "channel": "events",
@@ -437,7 +417,7 @@ async def ingest_and_update(
             })
             await redis.publish(settings.redis_channel_events, events_payload)
 
-        # --- predictions channel (every cycle) ---
+        # predictions channel (every cycle)
         pred_payload = json.dumps({
             "channel": "predictions",
             "type": "predictions",
@@ -446,11 +426,11 @@ async def ingest_and_update(
         })
         await redis.publish(settings.redis_channel_predictions, pred_payload)
 
-        # --- radio channel (every 5 cycles ~7.5 s) ---
+        #  radio channel (every 5 cycles ~7.5 s)
         if _poll_count % 5 == 0:
             await _poll_and_broadcast_radio(client, session_key, driver_map, redis, now_iso)
 
-        # --- location channel (every 2 cycles ~3 s) ---
+        #location channel (every 2 cycles ~3 s)
         if _poll_count % 2 == 0:
             await _poll_and_broadcast_location(client, session_key, redis, now_iso)
 
@@ -562,9 +542,7 @@ async def _poll_and_broadcast_location(
         logger.warning("Location poll error: %s", exc)
 
 
-# ---------------------------------------------------------------------------
 # Delta helpers
-# ---------------------------------------------------------------------------
 
 def _compute_leaderboard_delta(
     current_entries: List[Dict],
@@ -581,9 +559,7 @@ def _compute_leaderboard_delta(
     return changed
 
 
-# ---------------------------------------------------------------------------
 # Helper builders (unchanged from v1, kept here for locality)
-# ---------------------------------------------------------------------------
 
 def _build_leaderboard(
     session_key: int,

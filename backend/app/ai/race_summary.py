@@ -9,9 +9,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 
-# ---------------------------------------------------------------------------
 # Timeline builder
-# ---------------------------------------------------------------------------
 
 def build_timeline(events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Sort and enrich raw event dicts into a structured timeline."""
@@ -60,9 +58,7 @@ def _describe_event(evt: Dict[str, Any]) -> str:
     return descriptions.get(etype, f"{etype.replace('_', ' ').title()}{lap_str}.")
 
 
-# ---------------------------------------------------------------------------
 # Summary generator
-# ---------------------------------------------------------------------------
 
 def generate_summary(
     timeline: List[Dict[str, Any]],

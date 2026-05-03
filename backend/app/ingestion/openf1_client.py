@@ -36,9 +36,7 @@ class OpenF1Client:
         if self._client:
             await self._client.aclose()
 
-    # ------------------------------------------------------------------
     # Internal helpers
-    # ------------------------------------------------------------------
 
     async def _get_raw(self, endpoint: str, params: Optional[Dict] = None) -> List[Dict]:
         """Single HTTP GET — raises on any failure."""
@@ -85,9 +83,7 @@ class OpenF1Client:
         logger.error("OpenF1 all retries exhausted for %s — %s", endpoint, last_exc)
         return []
 
-    # ------------------------------------------------------------------
     # Public API methods
-    # ------------------------------------------------------------------
 
     async def get_latest_session(self) -> Optional[Dict]:
         data = await self._get("/sessions", {"session_key": "latest"})

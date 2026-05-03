@@ -49,9 +49,7 @@ class DriverService:
         )
         return result.scalar_one_or_none()
 
-    # ------------------------------------------------------------------
     # Redis helpers
-    # ------------------------------------------------------------------
 
     @staticmethod
     async def cache_drivers(drivers: List[Driver]) -> None:

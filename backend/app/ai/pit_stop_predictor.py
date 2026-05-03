@@ -35,7 +35,7 @@ def predict(features: PitStopFeatures) -> Tuple[float, Dict[str, Any]]:
     expected_life = _compound_life(features.tire_compound)
     laps_remaining = features.total_laps - features.current_lap
 
-    # --- wear factor: rises steeply past 80 % of expected compound life ---
+    # wear factor: rises steeply past 80% of expected compound life
     wear_ratio = features.tire_age / max(expected_life, 1)
     if wear_ratio < 0.6:
         wear_factor = wear_ratio * 0.30
@@ -45,16 +45,16 @@ def predict(features: PitStopFeatures) -> Tuple[float, Dict[str, Any]]:
         wear_factor = 0.30 + (wear_ratio - 0.8) * 1.50
     wear_factor = min(wear_factor, 0.70)
 
-    # --- lap-time trend factor: slope from linear regression over last N laps ---
+    # lap-time trend factor: slope from linear regression over last N laps
     # 0.1 s/lap degradation rate → +0.20 probability
     trend_factor = min(max(features.lap_time_trend / 0.1, 0.0) * 0.20, 0.30)
 
-    # --- strategic pit window bonus ---
+    # strategic pit window bonus
     half_race = features.total_laps / 2
     in_pit_window = abs(features.current_lap - half_race) < 5
     strategic_bonus = 0.10 if in_pit_window else 0.0
 
-    # --- late-race no-pit penalty ---
+    # late-race no-pit penalty
     late_race_penalty = 0.30 if laps_remaining < 10 else 0.0
 
     probability = wear_factor + trend_factor + strategic_bonus - late_race_penalty
