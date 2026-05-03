@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design Tokens ───────────────────────────────────────────────────────── */
+:root {
+  --bg:             #08090d;
+  --panel:          #0e1016;
+  --panel2:         #12141a;
+  --border:         #1e2130;
+  --border2:        #252840;
+  --text-primary:   #e8eaf0;
+  --text-secondary: #6b7280;
+  --text-muted:     #3d4356;
+  --green:          #00FF87;
+  --red:            #FF1801;
+  --purple:         #9B59FF;
+  --yellow:         #FFC906;
+  --blue:           #0093CC;
+  --font-mono:      'JetBrains Mono', 'Courier New', monospace;
+  --font-ui:        'Barlow Condensed', sans-serif;
+  --accent:         #00FF87;
+}
+
+/* ─── Reset ───────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+}
+
+#root { width: 100%; height: 100%; }
+
+/* ─── Scrollbars ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar         { width: 3px; height: 3px; }
+::-webkit-scrollbar-track   { background: transparent; }
+::-webkit-scrollbar-thumb   { background: var(--border2); border-radius: 2px; }
+
+/* ─── CRT scanline overlay ────────────────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ─── Animations ──────────────────────────────────────────────────────────── */
+@keyframes pulse-green {
+  0%, 100% { background: transparent; }
+  50%       { background: rgba(0,255,135,0.08); }
+}
+@keyframes pulse-red {
+  0%, 100% { background: transparent; }
+  50%       { background: rgba(255,24,1,0.12); }
+}
+@keyframes slide-in-left {
+  from { transform: translateX(-6px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(6px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+@keyframes live-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--green); }
+  50%       { opacity: 0.5; box-shadow: none; }
+}
+@keyframes number-tick {
+  0%   { transform: translateY(-4px); opacity: 0.4; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes loading-bar {
+  0%   { width: 0%; }
+  70%  { width: 85%; }
+  100% { width: 100%; }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes event-flash {
+  0%   { background: rgba(0,255,135,0.15); border-left-color: var(--green); }
+  100% { background: transparent; border-left-color: var(--border); }
+}
+@keyframes replay-stripe-slide {
+  from { background-position: 0 0; }
+  to   { background-position: 32px 0; }
+}
+/* Track map car overtake ring animations */
+@keyframes ring-gain {
+  from { transform: scale(1); opacity: 0.9; }
+  to   { transform: scale(3.5); opacity: 0; }
+}
+@keyframes ring-loss {
+  from { transform: scale(1); opacity: 0.7; }
+  to   { transform: scale(3); opacity: 0; }
+}
+@keyframes car-overtake-flash {
+  0%, 100% { opacity: 1; }
+  25%       { opacity: 0.3; filter: brightness(3); }
+  75%       { opacity: 0.8; filter: brightness(2); }
+}
+@keyframes event-slide-in {
+  from { transform: translateX(-8px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ─── Utility classes ────────────────────────────────────────────────────── */
+.anim-pulse-green { animation: pulse-green 0.8s ease; }
+.anim-pulse-red   { animation: pulse-red 0.8s ease; }
+.anim-fade-in     { animation: fade-in 0.15s ease; }
+.anim-slide-right { animation: slide-in-right 0.2s ease; }
+.anim-number-tick { animation: number-tick 0.3s ease; }
+.anim-blink       { animation: blink 1s infinite; }
+.anim-live-dot    { animation: live-dot 1.4s ease-in-out infinite; }
+
+/* ─── Recharts overrides ──────────────────────────────────────────────────── */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: var(--border);
+}
+.recharts-tooltip-wrapper { outline: none; }
