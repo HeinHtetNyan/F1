@@ -169,6 +169,7 @@ interface LiveState {
   chartCodes:       string[];   // top-4 for this session, locked once set
   carPositions:     Record<number, WsCarPosition>;
   _posBounds:       PosBounds | null;
+  apiRestricted:    boolean;    // true when OpenF1 API is locked (live session, no auth)
 
   _numToCode:  Record<number, string>;
   _tireAgeRef: Partial<Record<string, number>>;
@@ -182,6 +183,7 @@ interface LiveState {
   setRadioMessages:      (data: RadioMessage[])                      => void;
   addRadioMessages:      (data: RadioMessage[])                      => void;
   setCarPositions:       (data: WsCarPosition[])                     => void;
+  setApiRestricted:      (restricted: boolean, meta?: Partial<SessionInfo>) => void;
 }
 
 // ─── Store ────────────────────────────────────────────────────────────────────
@@ -199,6 +201,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
   chartCodes:       [],
   carPositions:     {},
   _posBounds:       null,
+  apiRestricted:    false,
   _numToCode:       {},
   _tireAgeRef:      {},
 
@@ -371,5 +374,21 @@ export const useLiveStore = create<LiveState>((set, get) => ({
     }
 
     set({ carPositions: next, _posBounds: b });
+  },
+
+  setApiRestricted: (restricted, meta) => {
+    const { session } = get();
+    const updates: Partial<LiveState> = { apiRestricted: restricted };
+    if (restricted && meta && (meta.circuitName || meta.sessionKey)) {
+      updates.session = {
+        sessionKey:  meta.sessionKey  ?? session?.sessionKey  ?? 0,
+        circuitName: meta.circuitName ?? session?.circuitName ?? '',
+        location:    meta.location    ?? session?.location    ?? '',
+        countryName: meta.countryName ?? session?.countryName ?? '',
+        year:        meta.year        ?? session?.year        ?? new Date().getFullYear(),
+        totalLaps:   meta.totalLaps   ?? session?.totalLaps   ?? 0,
+      };
+    }
+    set(updates as LiveState);
   },
 }));

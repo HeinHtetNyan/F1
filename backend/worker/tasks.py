@@ -27,6 +27,7 @@ from app.ai.features import build_overtake_features, build_pit_features
 from app.core.config import get_settings
 from app.core.logging import get_logger
 from app.core.redis_client import get_redis
+from app.ingestion.jolpica_client import JolpicaClient
 from app.ingestion.normalizer import (
     detect_overtake_events,
     normalize_driver,
@@ -55,6 +56,86 @@ _active_session_key: Optional[int] = None         # tracks current session
 _prev_leaderboard_entries: Dict[int, Dict] = {}   # driver_number → entry dict
 _seen_radio: set = set()                           # (driver_number, date) dedup
 _latest_car_positions: Dict[int, Dict] = {}        # driver_number → {x, y, z, date}
+
+_RESTRICTED_BROADCAST_INTERVAL = 15   # seconds between Jolpica fallback broadcasts
+_last_restricted_broadcast: float = 0.0
+
+_jolpica_client = JolpicaClient()
+
+
+# Session cache helpers
+async def _cache_session(session_data: Dict) -> None:
+    """Persist session metadata so the worker can identify the circuit during API lockout."""
+    redis = get_redis()
+    await redis.set(settings.redis_session_key, json.dumps(session_data), ex=86400)
+
+
+async def _load_cached_session() -> Optional[Dict]:
+    redis = get_redis()
+    raw = await redis.get(settings.redis_session_key)
+    return json.loads(raw) if raw else None
+
+
+async def _broadcast_jolpica_fallback() -> None:
+    """Query Jolpica/Ergast for the current race weekend + last race results and
+    broadcast a static snapshot so the frontend shows the correct circuit map
+    and real 2026 driver lineup while OpenF1 is locked.
+    """
+    from datetime import date as _date
+    try:
+        today = _date.today()
+        weekend, results = await asyncio.gather(
+            _jolpica_client.get_current_race_weekend(today),
+            _jolpica_client.get_latest_race_results(),
+        )
+
+        if not weekend:
+            logger.warning("Jolpica fallback: could not fetch race weekend info")
+            return
+
+        entries: List[LeaderboardEntry] = []
+        for r in results:
+            dn = r["driverNumber"] or r["position"]
+            entries.append(
+                LeaderboardEntry(
+                    position=r["position"],
+                    driver_number=dn,
+                    driver_name=f"{r['givenName']} {r['familyName']}".strip() or r["driverCode"],
+                    name_acronym=r["driverCode"],
+                    team_name=r["constructorName"],
+                    tire_compound="M",
+                    tire_age=0,
+                    pit_stops=0,
+                )
+            )
+
+        redis = get_redis()
+        now_iso = datetime.now(timezone.utc).isoformat()
+        payload = json.dumps({
+            "channel": "leaderboard",
+            "type": "snapshot",
+            "lap": None,
+            "timestamp": now_iso,
+            "data": {
+                "session_key":        0,
+                "session_name":       weekend.get("raceName"),
+                "circuit_short_name": weekend.get("circuitId"),
+                "country_name":       weekend.get("country"),
+                "location":           weekend.get("locality"),
+                "year":               weekend.get("year", 2026),
+                "total_laps":         None,
+                "api_restricted":     True,
+                "entries":            [e.model_dump() for e in entries],
+            },
+        })
+        await redis.publish(settings.redis_channel_leaderboard, payload)
+        logger.info(
+            "Jolpica fallback: broadcast %s (%s) with %d drivers",
+            weekend.get("raceName"), weekend.get("circuitId"), len(entries),
+        )
+
+    except Exception as exc:
+        logger.warning("Jolpica fallback error: %s", exc)
 
 
 # Redis fallback cache helpers
@@ -100,12 +181,22 @@ async def ingest_and_update(
 ) -> None:
     """Fetch → normalise → persist → predict → broadcast."""
     global _poll_count, _active_session_key, _prev_leaderboard_entries, _seen_radio, _latest_car_positions
+    global _last_restricted_broadcast
 
     try:
         session_data = await client.get_latest_session()
+        api_restricted = False
+
         if not session_data:
-            logger.warning("No active session from OpenF1")
+            # OpenF1 blocked — throttle Jolpica fallback broadcasts
+            import time as _time
+            if _time.monotonic() - _last_restricted_broadcast >= _RESTRICTED_BROADCAST_INTERVAL:
+                _last_restricted_broadcast = _time.monotonic()
+                await _broadcast_jolpica_fallback()
             return
+        else:
+            # Fresh session data — persist it for recovery during future lockouts
+            await _cache_session(session_data)
 
         session_key: int = session_data["session_key"]
         _state.reset_for_session(session_key)

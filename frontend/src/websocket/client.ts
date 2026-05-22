@@ -75,8 +75,23 @@ class F1WsClient {
 
     if (msg.type === 'ping') return;
 
+    if (msg.type === 'api_restricted' && msg.channel === 'leaderboard') {
+      const d = msg.data as BackendLeaderboard;
+      store.setApiRestricted(true, {
+        sessionKey:  d.session_key        ?? undefined,
+        circuitName: d.circuit_short_name ?? undefined,
+        location:    d.location           ?? undefined,
+        countryName: d.country_name       ?? undefined,
+        year:        d.year               ?? undefined,
+      });
+      return;
+    }
+
     if (msg.type === 'snapshot' && msg.channel === 'leaderboard') {
       const board = msg.data as BackendLeaderboard;
+      // api_restricted=true means data is from Jolpica fallback — show banner but still
+      // update the leaderboard so the correct circuit map and driver list are displayed
+      store.setApiRestricted(board.api_restricted ?? false);
       store.setLeaderboard(board.entries ?? [], {
         sessionKey:  board.session_key        ?? 0,
         circuitName: board.circuit_short_name ?? '',

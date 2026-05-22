@@ -29,6 +29,7 @@ export interface BackendLeaderboard {
   total_laps:         number | null;
   timestamp:          string;
   entries:            LeaderboardEntry[];
+  api_restricted?:    boolean;  // true when data is from Jolpica fallback (OpenF1 locked)
 }
 
 // WS events payload (from worker Redis publish) — no id, uses 'metadata' not 'event_metadata'
@@ -93,7 +94,7 @@ export interface WsCarPosition {
 
 // WS message envelope
 export interface WsMessage {
-  type:      'snapshot' | 'delta' | 'events' | 'predictions' | 'radio' | 'positions' | 'ping';
+  type:      'snapshot' | 'delta' | 'events' | 'predictions' | 'radio' | 'positions' | 'ping' | 'api_restricted';
   channel?:  string;
   lap?:      number;
   timestamp?: string;

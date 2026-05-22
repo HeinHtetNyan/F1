@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import List
+from typing import List, Optional
 
 from pydantic_settings import BaseSettings
 
@@ -17,6 +17,9 @@ class Settings(BaseSettings):
 
     # OpenF1 API
     openf1_base_url: str = "https://api.openf1.org/v1"
+    # Credentials for live-session access (optional — free tier works outside live sessions)
+    openf1_username: Optional[str] = None
+    openf1_password: Optional[str] = None
 
     # Worker timing
     poll_interval_seconds: float = 1.5

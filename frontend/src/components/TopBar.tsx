@@ -9,11 +9,12 @@ export function TopBar() {
   const connectionStatus = useLiveStore(s => s.connectionStatus);
   const currentLap       = useLiveStore(s => s.currentLap);
   const session          = useLiveStore(s => s.session);
+  const apiRestricted    = useLiveStore(s => s.apiRestricted);
 
   const displayLap = currentLap > 0 ? currentLap : lap;
   const totalLaps  = session?.totalLaps ?? 0;
   const raceName   = session
-    ? `${session.circuitName} Grand Prix ${session.year}`
+    ? `${session.countryName || session.location || session.circuitName} Grand Prix ${session.year}`
     : 'Formula 1';
 
   const mins = String(Math.floor(raceTime / 60)).padStart(2, '0');
@@ -66,9 +67,16 @@ export function TopBar() {
         </div>
       </div>
 
-      {/* Center — connection status */}
+      {/* Center — connection status / API restricted notice */}
       <div className="flex items-center gap-2 flex-shrink-0">
-        {isLive ? (
+        {apiRestricted ? (
+          <div className="flex items-center gap-1.5" title="Live session data requires OpenF1 credentials — showing last race results. Set OPENF1_USERNAME and OPENF1_PASSWORD in backend/.env to enable live timing.">
+            <span className="w-2 h-2 rounded-full bg-[--text-muted]" />
+            <span className="font-mono text-[9px] md:text-[10px] text-[--text-muted] uppercase tracking-widest">
+              Last Race Data
+            </span>
+          </div>
+        ) : isLive ? (
           <div className="flex items-center gap-1.5">
             <span className="anim-live-dot w-2 h-2 rounded-full bg-[--accent]" />
             <span className="font-mono text-[9px] md:text-[10px] font-bold text-[--accent] uppercase tracking-widest">
