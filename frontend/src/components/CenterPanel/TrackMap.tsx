@@ -5,7 +5,7 @@ import type { PosBounds } from '../../store/liveStore';
 import { TEAM_COLORS, TIRE_COLORS } from '../../data/f1Data';
 import type { Driver } from '../../types';
 
-// ─── Circuit definition type ──────────────────────────────────────────────────
+// Circuit definition type
 interface CircuitDef {
   name:       string;
   viewBox:    string;
@@ -17,7 +17,7 @@ interface CircuitDef {
   sfLine:     [number, number, number, number];  // x1,y1,x2,y2
 }
 
-// ─── Miami International Autodrome ───────────────────────────────────────────
+// Miami International Autodrome
 const MIAMI: CircuitDef = {
   name:    'Miami International Autodrome',
   viewBox: '0 0 580 490',
@@ -72,7 +72,7 @@ const MIAMI: CircuitDef = {
   sfLine: [122, 32, 122, 52],
 };
 
-// ─── Monaco Circuit de Monaco ─────────────────────────────────────────────────
+// Monaco Circuit de Monaco
 const MONACO: CircuitDef = {
   name:    'Circuit de Monaco',
   viewBox: '0 0 580 490',
@@ -145,7 +145,7 @@ const MONACO: CircuitDef = {
   sfLine: [80, 382, 80, 398],
 };
 
-// ─── Silverstone Circuit ──────────────────────────────────────────────────────
+// Silverstone Circuit
 const SILVERSTONE: CircuitDef = {
   name:    'Silverstone Circuit',
   viewBox: '0 0 580 490',
@@ -205,7 +205,7 @@ const SILVERSTONE: CircuitDef = {
   sfLine: [122, 372, 122, 388],
 };
 
-// ─── Autodromo Nazionale Monza ────────────────────────────────────────────────
+// Autodromo Nazionale Monza
 const MONZA: CircuitDef = {
   name:    'Autodromo Nazionale Monza',
   viewBox: '0 0 580 490',
@@ -267,7 +267,7 @@ const MONZA: CircuitDef = {
   sfLine: [104, 72, 104, 88],
 };
 
-// ─── Circuit Spa-Francorchamps ────────────────────────────────────────────────
+// Circuit Spa-Francorchamps
 const SPA: CircuitDef = {
   name:    'Circuit de Spa-Francorchamps',
   viewBox: '0 0 580 490',
@@ -335,7 +335,7 @@ const SPA: CircuitDef = {
   sfLine: [64, 112, 64, 128],
 };
 
-// ─── Autodromo Enzo e Dino Ferrari (Imola) ───────────────────────────────────
+// Autodromo Enzo e Dino Ferrari (Imola)
 const IMOLA: CircuitDef = {
   name:    'Autodromo Enzo e Dino Ferrari',
   viewBox: '0 0 580 490',
@@ -391,7 +391,7 @@ const IMOLA: CircuitDef = {
   sfLine: [478, 382, 478, 398],
 };
 
-// ─── Circuit de Barcelona-Catalunya ──────────────────────────────────────────
+// Circuit de Barcelona-Catalunya
 const BARCELONA: CircuitDef = {
   name:    'Circuit de Barcelona-Catalunya',
   viewBox: '0 0 580 490',
@@ -445,7 +445,7 @@ const BARCELONA: CircuitDef = {
 };
 
 // ─── Circuit de Monaco (placeholder for city street layout already defined above) ─
-// ─── Red Bull Ring ────────────────────────────────────────────────────────────
+// Red Bull Ring
 const RED_BULL_RING: CircuitDef = {
   name:    'Red Bull Ring',
   viewBox: '0 0 580 490',
@@ -493,7 +493,7 @@ const RED_BULL_RING: CircuitDef = {
   sfLine: [162, 392, 162, 408],
 };
 
-// ─── Circuit Zandvoort ────────────────────────────────────────────────────────
+// Circuit Zandvoort
 const ZANDVOORT: CircuitDef = {
   name:    'Circuit Zandvoort',
   viewBox: '0 0 580 490',
@@ -541,7 +541,7 @@ const ZANDVOORT: CircuitDef = {
   sfLine: [172, 392, 172, 408],
 };
 
-// ─── Hungaroring ──────────────────────────────────────────────────────────────
+// Hungaroring
 const BUDAPEST: CircuitDef = {
   name:    'Hungaroring',
   viewBox: '0 0 580 490',
@@ -587,7 +587,7 @@ const BUDAPEST: CircuitDef = {
   sfLine: [122, 292, 122, 308],
 };
 
-// ─── Baku City Circuit ────────────────────────────────────────────────────────
+// Baku City Circuit
 const BAKU: CircuitDef = {
   name:    'Baku City Circuit',
   viewBox: '0 0 580 490',
@@ -642,7 +642,7 @@ const BAKU: CircuitDef = {
   sfLine: [82, 372, 82, 388],
 };
 
-// ─── Marina Bay Street Circuit (Singapore) ────────────────────────────────────
+// Marina Bay Street Circuit (Singapore)
 const SINGAPORE: CircuitDef = {
   name:    'Marina Bay Street Circuit',
   viewBox: '0 0 580 490',
@@ -691,7 +691,7 @@ const SINGAPORE: CircuitDef = {
   sfLine: [102, 372, 102, 388],
 };
 
-// ─── Circuit of the Americas ──────────────────────────────────────────────────
+// Circuit of the Americas
 const COTA: CircuitDef = {
   name:    'Circuit of the Americas',
   viewBox: '0 0 580 490',
@@ -755,7 +755,7 @@ const COTA: CircuitDef = {
   sfLine: [104, 412, 104, 428],
 };
 
-// ─── Autodromo José Carlos Pace (Interlagos) ──────────────────────────────────
+// Autodromo José Carlos Pace (Interlagos)
 const INTERLAGOS: CircuitDef = {
   name:    'Autodromo José Carlos Pace',
   viewBox: '0 0 580 490',
@@ -813,7 +813,7 @@ const INTERLAGOS: CircuitDef = {
   sfLine: [434, 372, 446, 372],
 };
 
-// ─── Yas Marina Circuit (Abu Dhabi) ───────────────────────────────────────────
+// Yas Marina Circuit (Abu Dhabi)
 const ABU_DHABI: CircuitDef = {
   name:    'Yas Marina Circuit',
   viewBox: '0 0 580 490',
@@ -879,7 +879,7 @@ const ABU_DHABI: CircuitDef = {
   sfLine: [102, 352, 102, 368],
 };
 
-// ─── Suzuka Circuit ───────────────────────────────────────────────────────────
+// Suzuka Circuit
 const SUZUKA: CircuitDef = {
   name:    'Suzuka Circuit',
   viewBox: '0 0 580 490',
@@ -938,7 +938,7 @@ const SUZUKA: CircuitDef = {
   sfLine: [102, 362, 102, 378],
 };
 
-// ─── Circuit Gilles Villeneuve (Montréal) ─────────────────────────────────────
+// Circuit Gilles Villeneuve (Montréal)
 const MONTREAL: CircuitDef = {
   name:    'Circuit Gilles Villeneuve',
   viewBox: '0 0 580 490',
@@ -999,7 +999,7 @@ const MONTREAL: CircuitDef = {
   sfLine: [268, 420, 268, 440],
 };
 
-// ─── Generic oval fallback ────────────────────────────────────────────────────
+// Generic oval fallback
 const GENERIC: CircuitDef = {
   name:    'Circuit',
   viewBox: '0 0 580 490',
@@ -1018,7 +1018,7 @@ const GENERIC: CircuitDef = {
   sfLine:   [284, 118, 284, 134],
 };
 
-// ─── Circuit registry ─────────────────────────────────────────────────────────
+// Circuit registry
 const CIRCUITS: Record<string, CircuitDef> = {
   // Existing circuits
   miami:              MIAMI,
@@ -1072,7 +1072,7 @@ function getCircuit(circuitName: string | undefined, location?: string | undefin
   return GENERIC;
 }
 
-// ─── GPS → SVG coordinate mapping ────────────────────────────────────────────
+// GPS → SVG coordinate mapping
 function normalizeGps(
   x: number, y: number,
   bounds: PosBounds,
@@ -1093,7 +1093,7 @@ function normalizeGps(
   ];
 }
 
-// ─── Tooltip ──────────────────────────────────────────────────────────────────
+// Tooltip
 function Tooltip({
   cx, cy, d, vbWidth, vbHeight,
 }: { cx: number; cy: number; d: Driver; vbWidth: number; vbHeight: number }) {
@@ -1147,7 +1147,7 @@ function Tooltip({
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// Main component
 type AnimState = Record<string, 'gain' | 'loss'>;
 
 export const TrackMap = React.memo(function TrackMap() {
@@ -1274,10 +1274,10 @@ export const TrackMap = React.memo(function TrackMap() {
           </filter>
         </defs>
 
-        {/* ── Circuit infield fill ─────────────────────────────────────────── */}
+        {/* Circuit infield fill */}
         <path d={circuit.path} fill="#0b0d18" stroke="none" />
 
-        {/* ── Track layers ─────────────────────────────────────────────────── */}
+        {/* Track layers */}
         <path d={circuit.path} fill="none" stroke="#06070c"            strokeWidth={38} strokeLinejoin="round" strokeLinecap="round" />
         <path d={circuit.path} fill="none" stroke="#1a1c2e"            strokeWidth={30} strokeLinejoin="round" strokeLinecap="round" />
         <path d={circuit.path} fill="none" stroke="url(#track-grad)"   strokeWidth={22} strokeLinejoin="round" strokeLinecap="round" />
@@ -1287,7 +1287,7 @@ export const TrackMap = React.memo(function TrackMap() {
         <path d={circuit.path} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth={1.5}
           strokeLinejoin="round" strokeLinecap="round" strokeDasharray="10 9" />
 
-        {/* ── DRS zones ────────────────────────────────────────────────────── */}
+        {/* DRS zones */}
         {circuit.drsZones.map((z, i) => (
           <g key={i}>
             <rect x={z.x} y={z.y} width={z.w} height={z.h} fill="#0093CC" opacity={0.22} rx={3} />
@@ -1295,7 +1295,7 @@ export const TrackMap = React.memo(function TrackMap() {
           </g>
         ))}
 
-        {/* ── Sector markers ───────────────────────────────────────────────── */}
+        {/* Sector markers */}
         {circuit.sectors.map(m => (
           <g key={m.label}>
             <circle cx={m.x} cy={m.y} r={12} fill={m.color} opacity={0.15} />
@@ -1307,14 +1307,14 @@ export const TrackMap = React.memo(function TrackMap() {
           </g>
         ))}
 
-        {/* ── Start/finish line ─────────────────────────────────────────────── */}
+        {/* Start/finish line */}
         <line x1={sfX1} y1={sfY1} x2={sfX2} y2={sfY2}
           stroke="#ffffff" strokeWidth={2.5} opacity={0.55} />
         <rect x={sfX1 - 4} y={sfY1} width={4} height={4} fill="#fff" opacity={0.4} />
         <rect x={sfX1}     y={sfY1 + 4} width={4} height={4} fill="#fff" opacity={0.4} />
         <rect x={sfX1 - 4} y={sfY1 + 8} width={4} height={4} fill="#fff" opacity={0.4} />
 
-        {/* ── Car dots ─────────────────────────────────────────────────────── */}
+        {/* Car dots */}
         {drivers.map(d => {
           const xy = codeToXY[d.code];
           if (!xy) return null;
@@ -1396,7 +1396,7 @@ export const TrackMap = React.memo(function TrackMap() {
           );
         })}
 
-        {/* ── Tooltip ──────────────────────────────────────────────────────── */}
+        {/* Tooltip */}
         {hoveredCode && driverByCode[hoveredCode] && codeToXY[hoveredCode] && (
           <Tooltip
             cx={codeToXY[hoveredCode][0]}
@@ -1407,7 +1407,7 @@ export const TrackMap = React.memo(function TrackMap() {
           />
         )}
 
-        {/* ── Generic circuit name overlay ──────────────────────────────────── */}
+        {/* Generic circuit name overlay */}
         {circuit === GENERIC && (
           <g>
             <text x={vbW / 2} y={vbH / 2 - 8} textAnchor="middle"
@@ -1422,7 +1422,7 @@ export const TrackMap = React.memo(function TrackMap() {
           </g>
         )}
 
-        {/* ── Corner labels ─────────────────────────────────────────────────── */}
+        {/* Corner labels */}
         {circuit.corners.map((c, i) => (
           <text key={i} x={c.x} y={c.y} fontSize={7} fontFamily="monospace" fill="#3d4356"
             textAnchor="middle">
@@ -1430,13 +1430,13 @@ export const TrackMap = React.memo(function TrackMap() {
           </text>
         ))}
 
-        {/* ── DRS legend ─────────────────────────────────────────────────────── */}
+        {/* DRS legend */}
         <g transform={`translate(8, ${vbH - 14})`}>
           <rect x={0} y={0} width={9} height={9} fill="#0093CC" opacity={0.6} rx={1.5} />
           <text x={12} y={8} fontSize={7} fontFamily="monospace" fill="#3d4356">DRS Zone</text>
         </g>
 
-        {/* ── GPS / fallback indicator ───────────────────────────────────────── */}
+        {/* GPS / fallback indicator */}
         <g transform={`translate(${vbW - 8}, ${vbH - 14})`}>
           <circle cx={-4} cy={4} r={3.5}
             fill={hasGps ? '#00FF87' : '#6b7280'}

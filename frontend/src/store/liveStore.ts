@@ -7,7 +7,7 @@ import type {
 export type RadioMessage  = WsRadioEntry;
 export type PosBounds = { minX: number; maxX: number; minY: number; maxY: number };
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// Helpers
 
 function fmtLapTime(sec: number): string {
   const m = Math.floor(sec / 60);
@@ -145,7 +145,7 @@ function deriveStints(drivers: Driver[]): StintData[] {
   }));
 }
 
-// ─── State ────────────────────────────────────────────────────────────────────
+// State
 
 export interface SessionInfo {
   sessionKey:  number;
@@ -186,7 +186,7 @@ interface LiveState {
   setApiRestricted:      (restricted: boolean, meta?: Partial<SessionInfo>) => void;
 }
 
-// ─── Store ────────────────────────────────────────────────────────────────────
+// Store
 
 export const useLiveStore = create<LiveState>((set, get) => ({
   drivers:          [],
@@ -208,7 +208,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
   setLeaderboard: (entries, meta, incomingLap) => {
     const st = get();
 
-    // ── Session change detection ──────────────────────────────────────────
+    // Session change detection
     const incomingKey = meta?.sessionKey ?? null;
     const sessionChanged =
       incomingKey != null &&
